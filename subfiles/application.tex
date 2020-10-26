@@ -1,0 +1,126 @@
+\documentclass[../main]{subfiles}
+\begin{document}
+
+\chapter{主要应用和发展历史}%
+\label{cha:application}
+
+\section{主要应用}%
+\label{sec:major_application}
+
+如图~\ref{fig:application}，NAND 闪存主要用作存储设备。
+
+\begin{figure}[htbp]
+  \centering
+  \begin{tikzpicture}[transform shape, scale = 0.8]
+    \path[mindmap, concept color=black, text=white]
+      node[concept] {NAND 闪存}
+      [clockwise from=0]
+      child[concept color=green!50!black] {
+        node[concept] {固态硬盘}
+        [clockwise from=90]
+        child { node[concept] {SATA} }
+        child { node[concept] {NVMe} }
+        child { node[concept] {M.2} }
+        child { node[concept] {U.2} }
+      }
+      child[concept color=blue!50!black] {
+        node[concept] {多媒体卡}
+        [clockwise from=-30]
+        child { node[concept] {eMMC} }
+        child { node[concept] {UFS} }
+      }
+      child[concept color=red!50!black] {
+        node[concept] {安全数码卡}
+        [clockwise from=-60]
+        child { node[concept] {安全数码卡} }
+        child { node[concept] {微型安全数码卡} }
+      }
+      child[concept color=yellow!50!black] {
+        node[concept] {U 盘}
+        [clockwise from=180]
+        child { node[concept] {USB} }
+      };
+  \end{tikzpicture}
+  \caption{主要应用}%
+  \label{fig:application}
+\end{figure}
+
+以图~\ref{fig:sd}的微型安全数码卡 (micro SD, TF) 为例，介绍 NAND 闪存的应用。
+不同于 7 针的多媒体卡 (MMC) 和 9 针的安全数码卡 (SD) ， 8 针的 TF 卡很容易被
+辨别出来。
+
+\begin{figure}[htbp]
+  \centering
+  \begin{tikzpicture}[transform shape, fill = cyan, scale = 2]
+    \draw[rounded corners = 0.1cm] (0, 1) -- (0, 0) -| (2, 3) -| (0.3, 2);
+    \draw (0.3, 2) -- (0, 1.7) |- (0.1, 1.5) -- (0.1, 1.1) -- (0, 1);
+    \filldraw (0.3, 0.2) rectangle + (1.6, 1.2) node[midway] {闪存};
+    \filldraw (0.8, 1.5) rectangle + (0.8, 0.5) node[midway]
+      {\tiny 控制器};
+    \foreach \i in {0, ..., 7} {%
+      \ifthenelse{\i = 3}{%
+        \filldraw (0.4 + 0.2*\i, 2.1) rectangle + (0.15, 0.7)
+          node[yshift = 0.1cm] {\tiny 接口};
+      }
+      {%
+        \ifthenelse{\i = 5}{%
+          \filldraw (0.4 + 0.2*\i, 2.1) rectangle + (0.15, 0.7);
+        }
+        {%
+          \filldraw (0.4 + 0.2*\i, 2.1) rectangle + (0.15, 0.6);
+        }
+      }
+    }
+  \end{tikzpicture}
+  \caption{TF 卡结构}%
+  \label{fig:sd}
+\end{figure}
+
+其控制器如图~\ref{fig:controller}所示，低档的 TF 卡主控芯片是 C51 ，高档则为
+ARM，实现 FTL 的寿命均衡算法。
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics{figures/controller.pdf}
+  \caption{TF 卡电路模块}%
+  \label{fig:controller}
+\end{figure}
+
+\section{发展历史}%
+\label{sec:development_history}
+
+如表~\ref{tab:timeline}所示，舛冈富士雄被公认为闪存之父，但专精技术却不擅长在
+企业内与管理层交流，最终不得不与东芝公司对簿公堂。而东芝作为第一个发明闪存的
+公司，却因忽视闪存的价值，在闪存领域被英特尔取代，令人唏嘘。
+
+老牌的机械硬盘在发展 60 年技术成熟之际，被发展仅 10 年的固态硬盘凭借读写速率
+超越，仅由于价格和使用寿命还有一点市场，但已经大不如前。在机械硬盘上需要 1 分
+钟才能启动的操作系统在固态硬盘上只需不足 10 秒。就连老牌的机械硬盘生产厂商都
+有往固态硬盘发展的打算。
+
+U 盘已经取代光盘成为最流行的移动存储设备。光驱逐渐从现代电脑中淘汰。
+
+三星在挺过了手机爆炸门的阴影后终于凭借存储器涨价的东风取代了英特尔在半导体领
+域 14 年的行业龙头。目前三星的多媒体存储卡依旧供不应求，甚至连三星自己的手机
+都无法搭载足够的三星 UFS 多媒体存储卡，需要外购 SK 海力士UFS 多媒体存储卡补齐
+。
+
+对于国内，得益于闪存门事件后不少个人及自媒体的宣传与测试（将专业的闪存测速软
+件广泛分发给手机用户，再收集不同手机读写速率进行统计后公开），大多数国内用户
+开始关注手机的硬件性能与性价比，而不是盲目相信广告和宣传。这一事件被誉为“国内
+手机领域的启蒙运动”。
+
+\begin{table}
+  \centering
+  \caption{时间线}%
+  \label{tab:timeline}
+  \csvreader[
+    tabular = @{\,}r
+    <{\hskip 2pt}!{\color{blue}\makebox[0pt]{\textbullet}\hskip-0.5pt\vrule width 1pt\hspace{\labelsep}}>
+    {\raggedright\arraybackslash}p{12cm}
+    ]{tables/timeline.csv}{}{%
+    \csvcoli & \csvcolii
+  }
+\end{table}
+
+\end{document}

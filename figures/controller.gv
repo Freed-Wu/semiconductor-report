@@ -1,0 +1,22 @@
+digraph G {
+	rankdir = BT;
+	node[shape = box];
+	subgraph cluster0 {
+		node[style = filled, color = white];
+		style = filled;
+		color = lightgrey;
+		label = "控制器";
+		{
+			rank = same;
+			SPI;
+			单片机;
+			SD;
+		}
+		单片机 -> MUX;
+		驱动 -> DMA -> SD -> MUX;
+		SPI -> MUX;
+		RAM -> {DMA; SPI};
+	}
+	闪存 -> 驱动;
+	MUX -> 接口;
+}

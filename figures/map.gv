@@ -1,0 +1,10 @@
+digraph G{
+	node[shape = record];
+	lba[label = "<0>0| <1>1| <2>2| <3>3| <4>4"];
+	pba[label = "<0>0| <1>1| <2>2| <3>3| <4>4"];
+	lba:0 -> pba:0;
+	lba:1 -> pba:2;
+	lba:2 -> pba:4;
+	lba:3 -> pba:1;
+	lba:4 -> pba:3;
+}

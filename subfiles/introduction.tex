@@ -1,0 +1,176 @@
+\documentclass[../main]{subfiles}
+\begin{document}
+
+\chapter{基本概念和工作原理}%
+\label{cha:introduction}
+
+\section{基本概念}%
+\label{sec:concept}
+
+\begin{definition}[NAND 闪存 (Flash Storage)]
+  以块 (Block) 为单位擦除 (Erase) 和以页 (Page) 为单位写入 (Program) 的电子式可清除程序化只读存储器 (EEPROM) 。\cite{wiki:xxx,uefi}
+\end{definition}
+
+\begin{description}
+  \item[裸片 (die)]如图~\ref{fig:die}，单独执行命令、返回状态的最小单位；
+  \item[平面 (plane)]如图~\ref{fig:3d}，为了增加 NAND 闪存的容量，采用 3D
+    堆叠技术后一个裸片可以拥有超过一个平面；
+  \item[块]擦除的最小单位；
+  \item[页]写入的最小单位。
+\end{description}
+
+\begin{figure}[htbp]
+  \centering
+  \begin{tikzpicture}[transform shape]
+    \clip (-1.5, 0) rectangle (12, 30*0.3);
+    \foreach \X/\Y/\R/\C in {12/30/0/yellow, 6/30/0.1/brown, 2/5/0.15/gray, 1/1/0.2/green/page} {%
+      \foreach \x in {0, \X, ..., 12} {%
+        \foreach \y in {0, \Y, ..., 30} {%
+          \fill[\C] (\x + \R, {(\y + \R)*0.3}) rectangle (\x + \X - \R, {(\y + \Y - \R)*0.3});
+        }
+      }
+    }
+    \foreach \i/\C/\N in {0/yellow/裸片, 1/brown/平面, 2/gray/块, 3/green/页} {%
+      \fill[\C] (-1.5, \i) rectangle + (0.5, 0.5) node[midway, right, xshift = 5] {\color{black}\N};
+    }
+  \end{tikzpicture}
+  \caption{NAND 闪存结构}%
+  \label{fig:die}
+\end{figure}
+
+\newcommand\mystack[1]{%
+  \begin{tikzpicture}[transform shape, tdplot_main_coords, scale = 3]
+    \begin{scope}[yshift = #1]
+      \filldraw[fill = blue!50] (0, 0) + (-180:1)
+        \foreach \x in {-180, -90, 0, 90} {
+          -- + (\x:1) node at + (\x:1) (08-\x) {}
+        } -- cycle;
+    \end{scope}
+
+    \draw (0, 0) + (-180:1)
+      \foreach \x in {-180, -90, 0} {
+        -- + (\x:1) node at + (\x:1) (00-\x) {}
+      };
+    \filldraw[fill = blue!75] (00--180.center) -- (00--90.center) -- (08--90.center) -- (08--180.center) -- cycle;
+    \filldraw[fill = blue!25] (00--90.center) -- (00-0.center) -- (08-0.center) -- (08--90.center) -- cycle;
+
+    \foreach \y in {0, 2, ..., #1} {
+      \begin{scope}[yshift = \y]
+        \draw (0, 0) + (-180:1)
+          \foreach \x in {-180, -90, 0} {
+            -- + (\x:1) node at + (\x:1) (0\y-\x) {}
+          };
+      \end{scope}
+    }
+  \end{tikzpicture}
+}
+\begin{figure}[htbp]
+  \centering
+  \begin{subfigure}[htbp]{0.45\linewidth}
+    \centering
+    \mystack{2}
+    \caption{2D NAND}%
+    \label{fig:2d}
+  \end{subfigure}
+  \quad
+  \begin{subfigure}[htbp]{0.45\linewidth}
+    \centering
+    \mystack{16}
+    \caption{3D NAND}%
+    \label{fig:3d}
+  \end{subfigure}
+  \caption{3D 堆叠技术}%
+  \label{fig:stack}
+\end{figure}
+
+\begin{definition}[擦写 (P/E)]
+  NAND 闪存只能将 某一位 1 写入 0，如果需要从 0 反转为 1 需要按块擦除。会先
+  将该块标记为废块，再在后台自动回收废块。
+  NAND 闪存的寿命由擦写总次数衡量。
+\end{definition}
+
+\begin{definition}[闪存传递层 (FTL)]
+  如图~\ref{fig:map}，为了减少对某一块过于频繁的擦写产生坏块，会通过软件的方
+  式实现一个闪存传递层，将逻辑块与物理块一一对应。通过修改 FTL 实现闪存寿命均
+  衡。 FTL 由主控芯片实现，是闪存产品的市场竞争力之一。
+\end{definition}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics{figures/map.pdf}
+  \caption{闪存传递层映射}%
+  \label{fig:map}
+\end{figure}
+
+\begin{definition}[空闲块 (Over Provision)]
+  如图~\ref{fig:op}，在标示存储空间外预留的一部分存储空间。作用有：
+\end{definition}
+
+\begin{itemize}
+  \item 当有坏块时会顶替坏块，保证闪存容量不变；
+  \item 存储 FTL 表；
+  \item 给废块的回收预留空间；
+  \item 抑制写放大现象。
+\end{itemize}
+
+\newcommand\myopi{4}
+\newcommand\myopj{4}
+\begin{figure}[htbp]
+  \centering
+  \begin{tikzpicture}[transform shape]
+    \foreach \i in {0, ..., \myopi}{
+      \node at (0.5 + \i, -0.25){CH\i};
+    }
+    \foreach \j in {0, ..., \myopj}{
+      \node at (-0.75, 0.5 + \j){Block \j};
+    }
+    \filldraw[gray, opacity = 0.25] (0, \myopj) rectangle (\myopi + 1, \myopj + 1);
+    \draw[step = 0.25, style = help lines] (0, 0) grid (\myopi + 1, \myopj + 1);
+    \draw[step = 1] (0, 0) grid (\myopi + 1, \myopj + 1);
+    \draw[decorate, decoration = {brace, amplitude = 5pt}] (\myopi + 1, \myopj + 1) -- (\myopi + 1, \myopj) node [midway, xshift = 20pt]{空闲块};
+    \draw[decorate, decoration = {brace, amplitude = 5pt}] (\myopi + 1, \myopj) -- (\myopi + 1, 0) node [midway, xshift = 20pt]{存储块};
+  \end{tikzpicture}
+  \caption{空闲块}%
+  \label{fig:op}
+\end{figure}
+
+\begin{definition}[写放大 (Write Amplification)]
+  当空闲块数量过少时，每次擦写做废块回收会需要大量时间和更多的擦写次数，加速
+  坏块的产生，从而进一步减少空闲块，正反馈直至闪存最终因坏块过量数据无法读写
+  而报废。
+\end{definition}
+
+\section{工作原理}%
+\label{sec:working_principle}
+
+如图~\ref{fig:fet}，浮栅金属氧化物场效应管 (FGMOSFET) 是闪存的基本单元。
+
+\begin{description}
+  \item[读1]在初始状态下，在控制栅加一个低电压，源级与漏级之间会处于导通状态
+    ，存储数据 1。
+  \item[写入]在控制栅加一个高电压，从源级将电子吸入浮动栅，由于绝缘层不导电，
+    电子被囚禁。即使断电也不能逃逸~\footnote{但时间过久时仍然会有少量电子逃逸
+    }。
+  \item[读0]这时在控制栅加一个低电压，浮动栅的电子会与低电压抵消。源级与漏级
+    之间会处于断开状态，存储数据 0。
+  \item[擦除]这时在源级加一个高电压，利用浮动栅与源级的隧道效应~\footnote{量
+    子力学证明即使浮动栅与源级不连通，只要存在势能差，电子仍然能穿过屏障}。将
+    注入到浮空栅的负电荷吸引到源极，排空浮动栅的电子。回到初始状态。
+\end{description}
+
+\begin{figure}[htbp]
+  \centering
+  \begin{tikzpicture}[transform shape, scale = 3]
+    \filldraw[fill = gray] (0, 0) rectangle (3, -0.5) node[midway] {\tiny 衬底};
+    \filldraw[fill = green] (0, 0) rectangle (1.2, -0.2) node[midway] {\tiny 源级}
+      (1.8, 0) rectangle (3, -0.2) node[midway] {\tiny 漏极}
+      (1, 0.5) rectangle + (1, 0.25) node[midway] {\tiny 浮动栅级}
+      (1, 1.25) rectangle + (1, 0.25) node[midway] {\tiny 控制栅级};
+    \filldraw[fill = black] (1, 0) rectangle + (1, 0.5) node[midway] {\tiny\color{white}绝缘体}
+      (1, 0.75) rectangle + (1, 0.5) node[midway] {\tiny\color{white}绝缘体};
+  \end{tikzpicture}
+  \caption{浮栅金属氧化物场效应管}%
+  \label{fig:fet}
+\end{figure}
+
+\end{document}

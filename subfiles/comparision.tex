@@ -1,0 +1,41 @@
+\documentclass[../main]{subfiles}
+\begin{document}
+
+\chapter{优势和局限}%
+\label{cha:comparision}
+
+早在 NAND 闪存发明之前， NOR 闪存就已经问世。两者区别如图~\ref{fig:polar}所示
+。目前 NOR 闪存因为可以直接执行指令被广泛用于存储 BIOS 。早期的手机上会有 NOR
+闪存存储 NAND 闪存的驱动程序，用于之后加载 NAND 闪存。但后来三星率先退出
+NORless 技术，将 NAND 闪存的驱动程序写入 CPU 的片上 ROM 里，从而将 NOR 闪存逐
+出手机，大幅降低了手机成本。
+
+早期的 NAND 闪存一个存储单元只有 1 位，之后出于节省成本的需要，逐渐出现 2、3
+、4 位。目前高端固态硬盘仍为 SLC ，多媒体卡、U 盘以 MLC、TLC 居多。
+
+\begin{figure}[htbp]
+  \centering
+\begin{tikzpicture}[transform shape]
+  \begin{polaraxis}[
+      xtick = data,
+      xticklabels = {片上执行, 存储难易, 每位平均价, 最小工作电量, 耗电, 写速, 读速, 容量, 片上执行},
+      ytick = data,
+      yticklabels = {好, 差},
+    ]
+    \addplot table {data/polar/nor.dat};
+    \addplot table {data/polar/nand.dat};
+    \legend{NOR, NAND}
+  \end{polaraxis}
+\end{tikzpicture}
+  \caption{闪存比较}%
+  \label{fig:polar}
+\end{figure}
+
+\begin{table}[htbp]
+  \centering
+  \csvautobooktabular[respect percent]{tables/bit.csv}
+  \caption{每存储单元比特位比较}%
+  \label{tab:bit}
+\end{table}
+
+\end{document}

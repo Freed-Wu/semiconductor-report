@@ -1,0 +1,57 @@
+\documentclass[../main]{subfiles}
+\begin{document}
+
+\chapter{当前行业发展和主要厂商}%
+\label{cha:development}
+
+\section{当前行业发展}%
+\label{sec:current_status}
+
+如图~\ref{fig:bar}， NAND 闪存工艺逐渐往更微小的尺寸发展。各公司之间已经差距
+不大。~\footnote{统计图颜色是对应公司徽标的颜色。}
+
+\begin{figure}[htbp]
+  \centering
+  \begin{tikzpicture}[transform shape]
+    \begin{axis}[
+        ybar = 0,
+        bar width = 0.15cm,
+        xtick = data,
+        xlabel = 时间/年,
+        ylabel = 工艺/nm,
+        x tick label style = {/pgf/number format/1000 sep = , rotate = 30, anchor = north},
+      ]
+      \addplot[fill = blue] table {data/bar/samsung.dat};
+      \addplot[fill = gray] table {data/bar/micron.dat};
+      \addplot[fill = red] table {data/bar/toshiba.dat};
+      \addplot[fill = orange] table {data/bar/sk_hynix.dat};
+      \legend{三星, 美光, 铠侠, SK 海力士};
+  \end{axis}
+\end{tikzpicture}
+\caption{闪存工艺}%
+\label{fig:bar}
+\end{figure}
+
+\section{主要厂商}%
+\label{sec:major_supplier}
+
+如图~\ref{fig:pie}，三星依旧被称为“闪存王”，而依靠机械硬盘起家的西部数据在转
+型固态硬盘后也不容小觑，由东芝存储重组后的铠侠仍有足够的家底。
+
+\begin{figure}[htbp]
+  \centering
+  \begin{tikzpicture}[transform shape]
+    \pie[color = {blue, red, blue!50!black, gray, orange, blue!50}]{%
+      34.9/三星电子,
+      18.1/铠侠,
+      14/西部数据,
+      13.5/美光科技,
+      10.3/SK 海力士,
+      8.7/英特尔
+    }
+  \end{tikzpicture}
+  \caption{市场占有率}%
+  \label{fig:pie}
+\end{figure}
+
+\end{document}

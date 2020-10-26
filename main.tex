@@ -1,0 +1,83 @@
+\documentclass{njustthesis}
+\setCJKfamilyfont{simfang}{simfang}
+\njustsetup{%
+  author = 吴振宇,
+  id = 916101630117,
+  discipline = 电子信息工程,
+  title = 半导体技术基础,
+  subtitle = NAND 闪存,
+  title* = Semiconductor Technology Foundmentation,
+  cover-title = 半导体技术基础\\调研报告,
+  abstract-prefix = 调研报告,
+  header-title = 半导体技术基础调研报告,
+  supervisor = 顾文华,
+  supervisor-title = 教授,
+  judge = 顾文华,
+  signature = \includegraphics{signature},
+  judge-title = 教授,
+}
+\usepackage[refpage]{nomencl}
+\makenomenclature%
+\renewcommand{\nomname}{术语}
+\renewcommand{\pagedeclaration}{，第1次出现在页~}
+\usepackage{siunitx}
+\sisetup{mode = text}
+\usepackage{cases}
+\usepackage{csvsimple}
+\usepackage{booktabs}
+\usepackage{subfiles}
+\usepackage{subcaption}
+\newtheorem{definition}{定义}
+\newtheorem{theorem}{定理}
+\numberwithin{Exercise}{chapter}
+\usepackage{tikz}
+\usetikzlibrary{external}
+\usetikzlibrary{decorations.pathreplacing}
+\usetikzlibrary{mindmap}
+\usetikzlibrary{trees}
+\usepackage{pgfplots}
+\usepgfplotslibrary{polar}
+\tikzexternalize[
+  prefix = figures/,
+  figure list = true,
+]
+\tikzsetfigurename{}
+\usepackage{tikz-3dplot}
+\usepackage{pgf-pie}
+\tdplotsetmaincoords{70}{0}
+\usepackage{xcolor}
+\usepackage{ifthenx}
+\usepackage{dot2texi}
+\usepackage[export]{adjustbox}
+\usepackage{etoolbox}
+\expandafter\patchcmd\csname Gin@ii\endcsname{\setkeys{Gin}{#1}} {%
+  \setkeys{Gin} {%
+    width = 0.8\linewidth,
+    keepaspectratio,
+    #1
+  }
+}
+{}{}
+\begin{document}
+
+\maketitle
+
+\frontmatter
+\tableofcontents
+\listoffigures
+\listoftables
+\listofexercises%
+\printnomenclature%
+
+\mainmatter%
+\subfile{subfiles/introduction.tex}
+\subfile{subfiles/application.tex}
+\subfile{subfiles/comparision.tex}
+\subfile{subfiles/development.tex}
+\subfile{subfiles/prediction.tex}
+
+\backmatter%
+\bibliography{refs/main.bib}
+
+\end{document}
+
